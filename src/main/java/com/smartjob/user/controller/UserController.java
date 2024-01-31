@@ -3,6 +3,8 @@ package com.smartjob.user.controller;
 
 import com.smartjob.user.dto.ErrorDto;
 import com.smartjob.user.dto.UserDto;
+import com.smartjob.user.exception.EmailExistsException;
+import com.smartjob.user.exception.EmailPasswordIncorrectException;
 import com.smartjob.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +21,13 @@ public class UserController {
         try {
             UserDto response = userService.createUser(userDto);
             return ResponseEntity.ok(response);
+        } catch (EmailExistsException | EmailPasswordIncorrectException em) {
+            return ResponseEntity.badRequest().body(new ErrorDto(em.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ErrorDto(e.getMessage()));
+            return ResponseEntity.internalServerError()
+                    .body(new ErrorDto("Hubo un problema con la peticion vuelva intentar o comuniquese con el administrador"));
         }
+
     }
 
     @GetMapping
@@ -29,7 +35,7 @@ public class UserController {
         try {
             return ResponseEntity.ok(userService.getUsers());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ErrorDto(e.getMessage()));
+            return ResponseEntity.internalServerError().body(new ErrorDto(e.getMessage()));
         }
     }
 }

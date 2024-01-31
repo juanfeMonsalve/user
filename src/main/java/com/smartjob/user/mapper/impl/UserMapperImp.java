@@ -5,6 +5,8 @@ import com.smartjob.user.dto.UserDto;
 import com.smartjob.user.entity.Phone;
 import com.smartjob.user.entity.User;
 import com.smartjob.user.mapper.UserMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -14,6 +16,9 @@ import java.util.UUID;
 
 @Component
 public class UserMapperImp implements UserMapper {
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
     public UserDto userToUserDto(User user) {
         UserDto userDto = new UserDto();
@@ -57,7 +62,7 @@ public class UserMapperImp implements UserMapper {
         user.setModified(LocalDateTime.now());
         user.setIsActive(true);
         user.setLastLogin(LocalDateTime.now());
-        user.setPassword(userDto.getPassword());
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         user.setToken(String.valueOf(UUID.randomUUID()));
 
         List<Phone> phones = new ArrayList<>();

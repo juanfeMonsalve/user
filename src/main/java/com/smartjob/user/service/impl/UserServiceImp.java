@@ -1,14 +1,20 @@
 package com.smartjob.user.service.impl;
 
+import com.smartjob.user.dto.AuthResponse;
+import com.smartjob.user.dto.LoginRequest;
 import com.smartjob.user.dto.UserDto;
 import com.smartjob.user.entity.User;
 import com.smartjob.user.exception.EmailExistsException;
 import com.smartjob.user.exception.EmailPasswordIncorrectException;
+import com.smartjob.user.jwt.JwtService;
 import com.smartjob.user.mapper.UserMapper;
 import com.smartjob.user.repository.IUserRepository;
 import com.smartjob.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +30,10 @@ public class UserServiceImp implements UserService {
     private IUserRepository iUserRepository;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    private JwtService jwtService;
 
     @Override
     public UserDto createUser(UserDto userDto) throws Exception {
@@ -57,5 +67,15 @@ public class UserServiceImp implements UserService {
         Pattern pattern = Pattern.compile(emailExpresion);
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();
+    }
+
+    public AuthResponse login(LoginRequest request) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        UserDetails user = iUserRepository.finByEmail(request.getEmail()).orElseThrow();
+        String token = jwtService.getToken(user);
+        return AuthResponse.builder()
+                .token(token)
+                .build();
+
     }
 }

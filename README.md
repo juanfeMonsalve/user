@@ -8,4 +8,5 @@ Se esta ejecutando en el puerto 8080
 http://localhost:8080/api/swagger-ui/index.html
 Esta es la url de swagger en caso de cambiar el puerto aqui tambien se debe cambiar
 
-Entre las mejoras esta implementar el token Jwt
+Se agrega funcionalidad Jwt se debe primero crear el usuario, luego obtener el token y con este token pegarlo en el authorization de postman para el get de usuarios y retorna el valor 
+Se envia nuevo postman para que funcione

@@ -8,14 +8,14 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class RegisterRequest {
 
-    @NotBlank(message = "El username es obligatorio")
-    private String username;
+    private String name;
 
     @NotBlank(message = "El password es obligatorio")
     @Pattern(
@@ -24,10 +24,11 @@ public class RegisterRequest {
     )
     private String password;
 
-    @NotBlank(message = "El role es obligatorio")
     private String role;
 
     @NotBlank(message = "El email es obligatorio")
     @Email(message = "El email no tiene un formato válido")
     private String email;
+
+    private List<Phone> phones;
 }

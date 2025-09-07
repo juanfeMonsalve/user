@@ -2,6 +2,7 @@ package com.bci.user.controller;
 
 import com.bci.user.dto.AuthRequest;
 import com.bci.user.dto.AuthResponse;
+import com.bci.user.dto.LoginResponse;
 import com.bci.user.dto.RegisterRequest;
 import com.bci.user.service.UserService;
 import lombok.AllArgsConstructor;
@@ -20,14 +21,14 @@ public class AuthController {
 
     UserService userService;
 
-    @PostMapping("/register")
+    @PostMapping("/sing-up")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
 
         return ResponseEntity.ok(userService.register(request));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
+    public ResponseEntity<LoginResponse> login(@RequestBody AuthRequest request) {
 
         return ResponseEntity.ok(userService.login(request));
     }

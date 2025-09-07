@@ -1,5 +1,6 @@
 package com.bci.user.controller;
 
+import com.bci.user.dto.User;
 import com.bci.user.entity.UserEntity;
 import com.bci.user.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -27,14 +29,20 @@ class UserControllerTest {
     private UserController userController;
 
     private UserEntity user;
+    private User userDto;
 
     @BeforeEach
     void setUp() {
         user = new UserEntity();
-        user.setId(1L);
+        user.setId("76992a50-7150-4764-ac0a-201a3addadc1");
         user.setUsername("juan");
         user.setPassword("secret");
         user.setEmail("juan@test.com");
+        userDto = new User();
+        userDto.setId(UUID.randomUUID().toString());
+        userDto.setUsername("juan");
+        userDto.setPassword("secret");
+        userDto.setEmail("juan@test.com");
     }
 
     @Test
@@ -53,44 +61,49 @@ class UserControllerTest {
 
     @Test
     void getUserById_ShouldReturnUser_WhenExists() {
-        when(userService.getUserById(1L)).thenReturn(user);
+        when(userService.getUserById("76992a50-7150-4764-ac0a-201a3addadc1")).thenReturn(userDto);
 
-        ResponseEntity<UserEntity> response = userController.getUserById(1L);
+        ResponseEntity<User> response = userController.getUserById("76992a50-7150-4764-ac0a-201a3addadc1");
 
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
         assertThat(response.getBody()).isNotNull();
         assertThat(response.getBody().getEmail()).isEqualTo("juan@test.com");
 
-        verify(userService, times(1)).getUserById(1L);
+        verify(userService, times(1)).getUserById("76992a50-7150-4764-ac0a-201a3addadc1");
     }
 
     @Test
     void updateUser_ShouldReturnUpdatedUser() {
-        UserEntity updatedUser = new UserEntity();
-        updatedUser.setId(1L);
+        User updatedUser = new User();
+        updatedUser.setId("76992a50-7150-4764-ac0a-201a3addadc1");
         updatedUser.setUsername("juanUpdated");
         updatedUser.setEmail("updated@test.com");
 
-        when(userService.updateUser(eq(1L), any(UserEntity.class))).thenReturn(updatedUser);
+        UserEntity updatedUserEntity = new UserEntity();
+        updatedUserEntity.setId("76992a50-7150-4764-ac0a-201a3addadc1");
+        updatedUserEntity.setUsername("juanUpdated");
+        updatedUserEntity.setEmail("updated@test.com");
 
-        ResponseEntity<UserEntity> response = userController.updateUser(1L, updatedUser);
+        when(userService.updateUser(eq("76992a50-7150-4764-ac0a-201a3addadc1"), any(UserEntity.class))).thenReturn(updatedUser);
+
+        ResponseEntity<User> response = userController.updateUser("76992a50-7150-4764-ac0a-201a3addadc1", updatedUserEntity);
 
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
         assertThat(response.getBody().getUsername()).isEqualTo("juanUpdated");
         assertThat(response.getBody().getEmail()).isEqualTo("updated@test.com");
 
-        verify(userService, times(1)).updateUser(eq(1L), any(UserEntity.class));
+        verify(userService, times(1)).updateUser(eq("76992a50-7150-4764-ac0a-201a3addadc1"), any(UserEntity.class));
     }
 
     @Test
     void deleteUser_ShouldReturnNoContent() {
-        doNothing().when(userService).deleteUser(1L);
+        doNothing().when(userService).deleteUser("76992a50-7150-4764-ac0a-201a3addadc1");
 
-        ResponseEntity<Void> response = userController.deleteUser(1L);
+        ResponseEntity<Void> response = userController.deleteUser("76992a50-7150-4764-ac0a-201a3addadc1");
 
         assertThat(response.getStatusCodeValue()).isEqualTo(204);
         assertThat(response.getBody()).isNull();
 
-        verify(userService, times(1)).deleteUser(1L);
+        verify(userService, times(1)).deleteUser("76992a50-7150-4764-ac0a-201a3addadc1");
     }
 }

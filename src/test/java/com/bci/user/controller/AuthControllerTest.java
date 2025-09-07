@@ -2,6 +2,7 @@ package com.bci.user.controller;
 
 import com.bci.user.dto.AuthRequest;
 import com.bci.user.dto.AuthResponse;
+import com.bci.user.dto.LoginResponse;
 import com.bci.user.dto.RegisterRequest;
 import com.bci.user.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +12,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -31,20 +35,20 @@ class AuthControllerTest {
 
     @BeforeEach
     void setUp() {
-        validRegisterRequest = new RegisterRequest("juan", "a2asfGfdfdf4", "ROLE_USER", "juan@test.com");
+        validRegisterRequest = new RegisterRequest("juan", "a2asfGfdfdf4", "ROLE_USER", "juan@test.com", new ArrayList<>());
         validLoginRequest = new AuthRequest("juan", "a2asfGfdfdf4");
     }
 
     @Test
     void register_ShouldReturnOk_WhenValidRequest() {
-        AuthResponse response = new AuthResponse("fake-jwt");
+        AuthResponse response = new AuthResponse("asdasd","token", LocalDateTime.now(),LocalDateTime.now(),true);
         when(userService.register(any(RegisterRequest.class))).thenReturn(response);
 
         ResponseEntity<AuthResponse> result = authController.register(validRegisterRequest);
 
         assertThat(result.getStatusCodeValue()).isEqualTo(200);
         assertThat(result.getBody()).isNotNull();
-        assertThat(result.getBody().getToken()).isEqualTo("fake-jwt");
+        assertThat(result.getBody().getToken()).isEqualTo("token");
     }
 
     @Test
@@ -58,14 +62,14 @@ class AuthControllerTest {
 
     @Test
     void login_ShouldReturnOk_WhenValidRequest() {
-        AuthResponse response = new AuthResponse("jwt-login");
+        LoginResponse response = new LoginResponse("asdasd","token", LocalDateTime.now(),LocalDateTime.now(),true,"123");
         when(userService.login(any(AuthRequest.class))).thenReturn(response);
 
-        ResponseEntity<AuthResponse> result = authController.login(validLoginRequest);
+        ResponseEntity<LoginResponse> result = authController.login(validLoginRequest);
 
         assertThat(result.getStatusCodeValue()).isEqualTo(200);
         assertThat(result.getBody()).isNotNull();
-        assertThat(result.getBody().getToken()).isEqualTo("jwt-login");
+        assertThat(result.getBody().getToken()).isEqualTo("token");
     }
 
     @Test

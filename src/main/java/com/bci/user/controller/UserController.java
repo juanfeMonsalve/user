@@ -1,5 +1,6 @@
 package com.bci.user.controller;
 
+import com.bci.user.dto.User;
 import com.bci.user.entity.UserEntity;
 import com.bci.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -20,20 +21,20 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserEntity> getUserById(@PathVariable Long id) {
+    public ResponseEntity<User> getUserById(@PathVariable String id) {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserEntity> updateUser(
-            @PathVariable Long id,
+    public ResponseEntity<User> updateUser(
+            @PathVariable String id,
             @RequestBody UserEntity userDetails) {
 
         return ResponseEntity.ok(userService.updateUser(id, userDetails));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable String id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().<Void>build();
 

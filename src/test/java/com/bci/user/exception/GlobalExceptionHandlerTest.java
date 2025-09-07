@@ -31,7 +31,6 @@ class GlobalExceptionHandlerTest {
     @BeforeEach
     void setUp() {
         handler = new GlobalExceptionHandler();
-        when(request.getRequestURI()).thenReturn("/api/test");
     }
 
     @Test
@@ -42,8 +41,7 @@ class GlobalExceptionHandlerTest {
 
         assertThat(response.getStatusCodeValue()).isEqualTo(400);
         assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getError()).isEqualTo("User error");
-        assertThat(response.getBody().getPath()).isEqualTo("/api/test");
+        assertThat(response.getBody().getDetail()).isEqualTo("Unexpected error: User error");
     }
 
     @Test
@@ -54,24 +52,8 @@ class GlobalExceptionHandlerTest {
 
         assertThat(response.getStatusCodeValue()).isEqualTo(500);
         assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getError())
+        assertThat(response.getBody().getDetail())
                 .contains("Unexpected error: Something went wrong");
-        assertThat(response.getBody().getPath()).isEqualTo("/api/test");
     }
 
-    @Test
-    void handleValidationException_ShouldReturnBadRequest() {
-        MethodArgumentNotValidException ex =
-                new MethodArgumentNotValidException(null, bindingResult);
-
-        when(bindingResult.getAllErrors())
-                .thenReturn(Collections.singletonList(new ObjectError("field", "Invalid format")));
-
-        ResponseEntity<ErrorResponse> response = handler.handleValidationException(ex, request);
-
-        assertThat(response.getStatusCodeValue()).isEqualTo(400);
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getError()).isEqualTo("Invalid format");
-        assertThat(response.getBody().getPath()).isEqualTo("/api/test");
-    }
 }

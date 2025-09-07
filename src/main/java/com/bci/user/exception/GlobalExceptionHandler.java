@@ -18,8 +18,7 @@ public class GlobalExceptionHandler {
         ErrorResponse error = new ErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.BAD_REQUEST.value(),
-                ex.getMessage(),
-                request.getRequestURI()
+                "Unexpected error: " + ex.getMessage()
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
@@ -28,9 +27,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex, HttpServletRequest request) {
         ErrorResponse error = new ErrorResponse(
                 LocalDateTime.now(),
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                "Unexpected error: " + ex.getMessage(),
-                request.getRequestURI()
+                HttpStatus.BAD_REQUEST.value(),
+                "Unexpected error: " + ex.getMessage()
         );
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
@@ -39,16 +37,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleValidationException(
             MethodArgumentNotValidException ex, HttpServletRequest request) {
 
-        String errorMessage = ex.getBindingResult()
-                .getAllErrors()
-                .get(0)
-                .getDefaultMessage();
-
         ErrorResponse error = new ErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.BAD_REQUEST.value(),
-                errorMessage,
-                request.getRequestURI()
+                "Unexpected error: " + ex.getMessage()
         );
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
